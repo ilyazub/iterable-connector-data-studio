@@ -1,0 +1,10 @@
+{
+  "name": "iterable-connector-data-studio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "packageManager": "yarn@3.2.0",
+  "devDependencies": {
+    "@google/clasp": "^2.4.1"
+  }
+}

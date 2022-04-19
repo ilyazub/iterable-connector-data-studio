@@ -1,0 +1,22 @@
+{
+  "runtimeVersion": "V8",
+  "dataStudio": {
+    "name": "Iterable Campaigns Metrics",
+    "logoUrl": "https://api.iterable.com/assets/images/favicons/updated/icon.ico",
+    "company": "Illia Zub",
+    "addonUrl": "https://serpapi.com",
+    "supportUrl": "https://serpapi.com#contact",
+    "description": "Get Iterable campaign metrics.",
+    "sources": [
+      "iterable"
+    ]
+  },
+  "webapp": {
+    "executeAs": "USER_DEPLOYING",
+    "access": "MYSELF"
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request"
+  ],
+  "exceptionLogging": "STACKDRIVER"
+}
