@@ -26,10 +26,17 @@ function getFields() {
   var types = cc.FieldType;
   var aggregations = cc.AggregationType;
 
+  // Common
   fields.newDimension().setId('id').setName("id").setType(types.TEXT);
   fields.newDimension().setId('AverageOrderValue').setName("Average Order Value").setType(types.NUMBER);
-  fields.newDimension().setId('PurchasesMEmail').setName("Purchases / M (Email)").setType(types.NUMBER);
   fields.newDimension().setId('Revenue').setName("Revenue").setType(types.NUMBER);
+  fields.newDimension().setId('TotalPurchases').setName("Total Purchases").setType(types.NUMBER);
+  fields.newDimension().setId('TotalUnsubscribes').setName("Total Unsubscribes").setType(types.NUMBER);
+  fields.newDimension().setId('UniquePurchases').setName("Unique Purchases").setType(types.NUMBER);
+  fields.newDimension().setId('UniqueUnsubscribes').setName("Unique Unsubscribes").setType(types.NUMBER);
+
+  // Email
+  fields.newDimension().setId('PurchasesMEmail').setName("Purchases / M (Email)").setType(types.NUMBER);
   fields.newDimension().setId('RevenueMEmail').setName("Revenue / M (Email)").setType(types.NUMBER);
   fields.newDimension().setId('TotalComplaints').setName("Total Complaints").setType(types.NUMBER);
   fields.newDimension().setId('TotalEmailHoldout').setName("Total Email Holdout").setType(types.NUMBER);
@@ -41,8 +48,6 @@ function getFields() {
   fields.newDimension().setId('TotalEmailsClicked').setName("Total Emails Clicked").setType(types.NUMBER);
   fields.newDimension().setId('TotalEmailsDelivered').setName("Total Emails Delivered").setType(types.NUMBER);
   fields.newDimension().setId('TotalHostedUnsubscribeClicks').setName("Total Hosted Unsubscribe Clicks").setType(types.NUMBER);
-  fields.newDimension().setId('TotalPurchases').setName("Total Purchases").setType(types.NUMBER);
-  fields.newDimension().setId('TotalUnsubscribes').setName("Total Unsubscribes").setType(types.NUMBER);
   fields.newDimension().setId('UniqueEmailClicks').setName("Unique Email Clicks").setType(types.NUMBER);
   fields.newDimension().setId('UniqueEmailOpens').setName("Unique Email Opens").setType(types.NUMBER);
   fields.newDimension().setId('UniqueEmailOpensFiltered').setName("Unique Email Opens (filtered)").setType(types.NUMBER);
@@ -51,8 +56,14 @@ function getFields() {
   fields.newDimension().setId('UniqueEmailsBounced').setName("Unique Emails Bounced").setType(types.NUMBER);
   fields.newDimension().setId('UniqueEmailsDelivered').setName("Unique Emails Delivered").setType(types.NUMBER);
   fields.newDimension().setId('UniqueHostedUnsubscribeClicks').setName("Unique Hosted Unsubscribe Clicks").setType(types.NUMBER);
-  fields.newDimension().setId('UniquePurchases').setName("Unique Purchases").setType(types.NUMBER);
-  fields.newDimension().setId('UniqueUnsubscribes').setName("Unique Unsubscribes").setType(types.NUMBER);
+
+  // Web Push
+  fields.newDimension().setId('TotalWebPushClicks').setName("Total Web Push Clicks").setType(types.NUMBER);
+  fields.newDimension().setId('TotalWebPushSendSkips').setName("Total Web Push Send Skips").setType(types.NUMBER);
+  fields.newDimension().setId('TotalWebPushesSent').setName("Total Web Pushes Sent").setType(types.NUMBER);
+  fields.newDimension().setId('TotalWebPushHoldout').setName("Total WebPush Holdout").setType(types.NUMBER);
+  fields.newDimension().setId('UniqueWebPushClicks').setName("Unique Web Push Clicks").setType(types.NUMBER);
+  fields.newDimension().setId('UniqueWebPushesSent').setName("Unique Web Pushes Sent").setType(types.NUMBER);
 
   return fields;
 }
