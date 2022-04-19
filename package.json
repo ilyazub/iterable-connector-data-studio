@@ -6,5 +6,8 @@
   "packageManager": "yarn@3.2.0",
   "devDependencies": {
     "@google/clasp": "^2.4.1"
+  },
+  "scripts": {
+    "script-push": "clasp push"
   }
 }

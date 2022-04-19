@@ -1,5 +1,7 @@
+var cc = DataStudioApp.createCommunityConnector();
+var DEFAULT_CAMPAIGNS = '3642929,3638831'
+
 function getConfig() {
-  var cc = DataStudioApp.createCommunityConnector();
   var config = cc.getConfig();
 
   config.newInfo()
@@ -10,7 +12,7 @@ function getConfig() {
     .setId('id')
     .setName('Enter a Iterable campaign ID')
     .setHelpText('e.g. 7474747')
-    .setPlaceholder('7474747')
+    .setPlaceholder(DEFAULT_CAMPAIGNS)
     .setAllowOverride(true);
 
   config.setDateRangeRequired(true);
@@ -20,12 +22,11 @@ function getConfig() {
 }
 
 function getFields() {
-  var cc = DataStudioApp.createCommunityConnector();
   var fields = cc.getFields();
   var types = cc.FieldType;
   var aggregations = cc.AggregationType;
 
-  fields.newDimension().setId('id').setName("id").setType(types.NUMBER);
+  fields.newDimension().setId('id').setName("id").setType(types.TEXT);
   fields.newDimension().setId('AverageOrderValue').setName("Average Order Value").setType(types.NUMBER);
   fields.newDimension().setId('PurchasesMEmail').setName("Purchases / M (Email)").setType(types.NUMBER);
   fields.newDimension().setId('Revenue').setName("Revenue").setType(types.NUMBER);
@@ -62,6 +63,8 @@ function getSchema(request) {
 }
 
 function getData(request) {
+  request.configParams = validateConfig(request.configParams);
+
   var requestedFieldIds = request.fields.map(field => field.name);
   var requestedFields = getFields().forIds(requestedFieldIds);
 
@@ -70,7 +73,7 @@ function getData(request) {
   var url = 'https://api.iterable.com/api/campaigns/metrics';
 
   var parameters = {
-    campaignId: request.configParams.campaignId,
+    campaignId: request.configParams.id,
     startDateTime: request.dateRange.startDate,
     endDateTime: request.dateRange.endDate,
   };
@@ -95,7 +98,7 @@ function getData(request) {
     var response = UrlFetchApp.fetch(urlWithParameters, options);
     Logger.log(`Response text: ${response.getContentText()}`);
 
-    var rows = responseToRows(requestedFields, response, request.configParams.campaignId);
+    var rows = responseToRows(requestedFields, response, request.configParams.id);
     Logger.log(`Rows: ${JSON.stringify(rows)}`);
 
     return {
@@ -103,22 +106,21 @@ function getData(request) {
       rows: rows
     };
   } catch (e) {
-    DataStudioApp.createCommunityConnector()
-      .newUserError()
+    cc.newUserError()
       .setDebugText('Failed URL Fetch Attempt. Exception details: ' + e)
       .setText('There was an error accessing this domain. Try again later, or file an issue if this error persists.')
       .throwException();
   }
 }
 
-function responseToRows(requestedFields, response, campaignId) {
+function responseToRows(requestedFields, response, id) {
   var csv = Utilities.parseCsv(response);
 
   var headers = csv[0]
   var rows = csv.slice(1)
 
   var fields = requestedFields.asArray();
-  Logger.log(`Requested fields: ${JSON.stringify(requestedFields)}. CampaignID: ${campaignId}`);
+  Logger.log(`Requested fields: ${JSON.stringify(requestedFields)}. Campaign ID (id): ${id}`);
 
   return rows.map(function (item) {
     Logger.log(`Item: ${JSON.stringify(item)}`)
@@ -147,7 +149,6 @@ function responseToRows(requestedFields, response, campaignId) {
   });
 }
 
-/* exported buildUrl_ */
 /**
  * Builds a complete URL from a base URL and a map of URL parameters.
  * @param {string} url The base URL.
@@ -157,7 +158,30 @@ function responseToRows(requestedFields, response, campaignId) {
  */
 function buildUrl_(url, params) {
   var paramString = Object.keys(params).map(function (key) {
-    return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    let param = params[key];
+
+    if (Array.isArray(param)) {
+      return param.map(value => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&')
+    } else {
+      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
+    }
   }).join('&');
-  return url + (url.indexOf('?') >= 0 ? '&' : '?') + paramString;
+  return url + (url.includes('?') ? '&' : '?') + paramString;
+}
+
+/**
+ * Validates config parameters and provides missing values.
+ *
+ * @param {Object} configParams Config parameters from `request`.
+ * @returns {Object} Updated Config parameters.
+ */
+ function validateConfig(configParams) {
+  configParams = configParams || {};
+  configParams.id = configParams.id || DEFAULT_CAMPAIGNS;
+
+  configParams.id = configParams.id
+    .split(',')
+    .map(x => x.trim());
+
+  return configParams;
 }
