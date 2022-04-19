@@ -143,7 +143,7 @@ function responseToRows(requestedFields, response, campaignId) {
       }
     });
 
-    return {values: row};
+    return { values: row };
   });
 }
 
